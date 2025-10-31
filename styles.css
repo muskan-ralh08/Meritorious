@@ -2,47 +2,119 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  user-select: none;
 }
 
 body {
-  background: linear-gradient(to top, #87ceeb, #fff);
-  overflow: hidden;
-  font-family: Arial, sans-serif;
+  background-color: #222;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-family: "Segoe UI", sans-serif;
 }
 
 #game {
-  width: 100%;
-  height: 400px;
-  background-color: #6dc36d;
   position: relative;
+  width: 100%;
+  max-width: 600px;
+  height: 400px;
   overflow: hidden;
-  border-top: 4px solid #4a7c59;
+  background: linear-gradient(to top, #68c3a3 40%, #87ceeb 60%);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+/* Background animation */
+#background {
+  position: absolute;
+  width: 200%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    90deg,
+    #7bc043 0px,
+    #7bc043 100px,
+    #68c3a3 100px,
+    #68c3a3 200px
+  );
+  animation: scrollBg 3s linear infinite;
+  z-index: 0;
+}
+
+@keyframes scrollBg {
+  from {
+    left: 0;
+  }
+  to {
+    left: -100%;
+  }
 }
 
 #player {
-  width: 40px;
-  height: 40px;
-  background-color: #ff5722;
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(to top, #ff9800, #ffc107);
+  border-radius: 10px;
   position: absolute;
-  bottom: 0;
-  left: 50px;
-  border-radius: 5px;
+  bottom: 20px;
+  left: calc(50% - 25px);
+  z-index: 2;
+  transition: left 0.2s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
 #obstacle {
-  width: 40px;
+  width: 50px;
   height: 60px;
-  background-color: #333;
+  background: #333;
+  border-radius: 5px;
   position: absolute;
-  bottom: 0;
+  bottom: 20px;
   right: -60px;
+  z-index: 1;
 }
 
 #score {
   position: absolute;
   top: 10px;
-  left: 10px;
-  color: #fff;
+  left: 15px;
+  color: white;
+  font-size: 1.2em;
   font-weight: bold;
-  font-size: 20px;
+  z-index: 3;
+}
+
+/* Mobile Controls */
+#controls {
+  position: absolute;
+  bottom: 10px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  z-index: 5;
+}
+
+#controls button {
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid #fff;
+  color: white;
+  font-size: 24px;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+#controls button:active {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+/* Hide controls on desktop */
+@media (min-width: 768px) {
+  #controls {
+    display: none;
+  }
 }
