@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Subway Runner</title>
+    <title>Subway Runner - Muskan Ralh</title>
     <style>
         * {
             margin: 0;
@@ -13,8 +13,8 @@
         }
         
         body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(to bottom, #87CEEB, #1E90FF);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
             height: 100vh;
             overflow: hidden;
             display: flex;
@@ -32,8 +32,9 @@
             max-width: 500px;
             height: 80vh;
             overflow: hidden;
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 3px solid #FFD700;
         }
         
         #gameCanvas {
@@ -52,53 +53,60 @@
             pointer-events: none;
         }
         
-        .score-display {
+        .score-display, .coins-display {
             position: absolute;
             top: 20px;
-            left: 20px;
-            font-size: 24px;
+            font-size: 22px;
             font-weight: bold;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.5);
+            padding: 8px 15px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .score-display {
+            left: 20px;
+            border: 2px solid #4CAF50;
         }
         
         .coins-display {
-            position: absolute;
-            top: 20px;
             right: 20px;
-            font-size: 24px;
-            font-weight: bold;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            border: 2px solid #FFD700;
         }
         
         .controls {
             position: absolute;
-            bottom: 20px;
+            bottom: 25px;
             width: 100%;
             display: flex;
             justify-content: space-between;
-            padding: 0 20px;
+            padding: 0 25px;
             pointer-events: auto;
         }
         
         .control-btn {
-            width: 80px;
-            height: 80px;
+            width: 75px;
+            height: 75px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.2);
             border: 3px solid white;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
+            font-size: 28px;
             color: white;
             cursor: pointer;
             transition: all 0.2s;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(5px);
         }
         
         .control-btn:active {
-            transform: scale(0.9);
-            background: rgba(255, 255, 255, 0.5);
+            transform: scale(0.85);
+            background: rgba(255, 255, 255, 0.4);
         }
         
         .start-screen, .game-over-screen {
@@ -111,8 +119,10 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.85);
             z-index: 10;
+            text-align: center;
+            padding: 20px;
         }
         
         .game-over-screen {
@@ -120,35 +130,57 @@
         }
         
         h1 {
-            font-size: 40px;
-            margin-bottom: 20px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            font-size: 48px;
+            margin-bottom: 15px;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.7);
+            background: linear-gradient(to right, #FFD700, #FFA500, #FF8C00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 2px;
+        }
+        
+        .subtitle {
+            font-size: 18px;
+            margin-bottom: 30px;
             color: #FFD700;
+            font-weight: bold;
         }
         
         .btn {
-            padding: 15px 30px;
+            padding: 15px 40px;
             font-size: 20px;
-            background: #FF5722;
+            background: linear-gradient(to right, #FF5722, #FF9800);
             border: none;
             border-radius: 50px;
             color: white;
             cursor: pointer;
             margin-top: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-            transition: all 0.2s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+            transition: all 0.3s;
             pointer-events: auto;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
         }
         
         .btn:active {
-            transform: scale(0.95);
+            transform: translateY(1px);
         }
         
         .instructions {
             text-align: center;
-            max-width: 80%;
-            margin-top: 20px;
-            line-height: 1.5;
+            max-width: 85%;
+            margin: 25px 0;
+            line-height: 1.6;
+            font-size: 16px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #FFD700;
         }
         
         .lane-indicator {
@@ -157,46 +189,174 @@
             width: 100%;
             display: flex;
             justify-content: center;
-            gap: 20px;
+            gap: 25px;
         }
         
         .lane-dot {
-            width: 15px;
-            height: 15px;
+            width: 18px;
+            height: 18px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.5);
-            transition: all 0.2s;
+            background: rgba(255, 255, 255, 0.4);
+            transition: all 0.3s;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
         }
         
         .lane-dot.active {
             background: #FFD700;
-            transform: scale(1.3);
+            transform: scale(1.4);
+            box-shadow: 0 0 15px #FFD700;
+        }
+        
+        .sound-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            pointer-events: auto;
+            z-index: 5;
+            border: 2px solid #FFD700;
+        }
+        
+        .high-score {
+            position: absolute;
+            top: 80px;
+            left: 20px;
+            font-size: 16px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 5px 15px;
+            border-radius: 15px;
+            border: 1px solid #4CAF50;
+        }
+        
+        .power-ups {
+            position: absolute;
+            top: 80px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .power-up {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            border: 1px solid white;
+        }
+        
+        .power-up.active {
+            background: rgba(255, 215, 0, 0.7);
+            box-shadow: 0 0 10px #FFD700;
         }
         
         @media (max-width: 500px) {
             .control-btn {
-                width: 70px;
-                height: 70px;
+                width: 65px;
+                height: 65px;
+                font-size: 24px;
             }
             
             h1 {
-                font-size: 32px;
+                font-size: 36px;
             }
             
             .btn {
-                padding: 12px 25px;
+                padding: 12px 30px;
                 font-size: 18px;
             }
+            
+            .instructions {
+                font-size: 14px;
+            }
+        }
+        
+        .character {
+            width: 60px;
+            height: 80px;
+            position: absolute;
+            bottom: 120px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(to bottom, #3498db, #2980b9);
+            border-radius: 10px 10px 5px 5px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .character::before {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #2c3e50;
+            border-radius: 50%;
+            top: 15px;
+            left: 10px;
+        }
+        
+        .character::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #2c3e50;
+            border-radius: 50%;
+            top: 15px;
+            right: 10px;
+        }
+        
+        .pulse {
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: translateX(-50%) scale(1); }
+            50% { transform: translateX(-50%) scale(1.05); }
+            100% { transform: translateX(-50%) scale(1); }
+        }
+        
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+        
+        @keyframes floating {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
         }
     </style>
 </head>
 <body>
     <div class="game-container">
         <canvas id="gameCanvas"></canvas>
-        
+        <H1>GAME BY MUSKAN RALH</H1>
         <div class="ui-overlay">
-            <div class="score-display">Score: <span id="score">0</span></div>
-            <div class="coins-display">Coins: <span id="coins">0</span></div>
+            <div class="score-display">
+                <span>🏆</span> Score: <span id="score">0</span>
+            </div>
+            <div class="coins-display">
+                <span>🪙</span> Coins: <span id="coins">0</span>
+            </div>
+            
+            <div class="high-score">
+                High Score: <span id="highScore">0</span>
+            </div>
+            
+            <div class="power-ups">
+                <div class="power-up" title="Magnet">🧲</div>
+                <div class="power-up" title="Shield">🛡️</div>
+                <div class="power-up" title="Boost">🚀</div>
+            </div>
             
             <div class="lane-indicator">
                 <div class="lane-dot" data-lane="0"></div>
@@ -209,21 +369,47 @@
                 <div class="control-btn" id="jumpBtn">↑</div>
                 <div class="control-btn" id="rightBtn">→</div>
             </div>
+            
+            <div class="sound-toggle" id="soundToggle">
+                <span id="soundIcon">🔊</span>
+            </div>
         </div>
         
         <div class="start-screen" id="startScreen">
             <h1>SUBWAY RUNNER</h1>
-            <p class="instructions">Avoid obstacles, collect coins, and get the highest score!</p>
-            <button class="btn" id="startBtn">START GAME</button>
+            <div class="subtitle">By Muskan Ralh</div>
+            <div class="character pulse"></div>
+            <p class="instructions">Swipe or use buttons to move between lanes, jump to avoid obstacles, and collect as many coins as you can!</p>
+            <button class="btn floating" id="startBtn">START GAME</button>
         </div>
         
         <div class="game-over-screen" id="gameOverScreen">
             <h1>GAME OVER</h1>
-            <p>Your Score: <span id="finalScore">0</span></p>
-            <p>Coins Collected: <span id="finalCoins">0</span></p>
+            <div class="instructions">
+                <p>Your Score: <span id="finalScore">0</span></p>
+                <p>Coins Collected: <span id="finalCoins">0</span></p>
+                <p>High Score: <span id="finalHighScore">0</span></p>
+            </div>
             <button class="btn" id="restartBtn">PLAY AGAIN</button>
         </div>
     </div>
+
+    <!-- Audio elements -->
+    <audio id="backgroundMusic" loop>
+        <source src="https://assets.mixkit.co/music/preview/mixkit-game-show-suspense-waiting-667.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="coinSound">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-coin-win-notification-1996.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="jumpSound">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-player-jumping-in-a-video-game-2043.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="gameOverSound">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-arcade-retro-game-over-213.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="collisionSound">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-arcade-game-explosion-2759.mp3" type="audio/mpeg">
+    </audio>
 
     <script>
         // Game variables
@@ -231,16 +417,27 @@
         const ctx = canvas.getContext('2d');
         const scoreDisplay = document.getElementById('score');
         const coinsDisplay = document.getElementById('coins');
+        const highScoreDisplay = document.getElementById('highScore');
         const startScreen = document.getElementById('startScreen');
         const gameOverScreen = document.getElementById('gameOverScreen');
         const finalScore = document.getElementById('finalScore');
         const finalCoins = document.getElementById('finalCoins');
+        const finalHighScore = document.getElementById('finalHighScore');
         const startBtn = document.getElementById('startBtn');
         const restartBtn = document.getElementById('restartBtn');
         const leftBtn = document.getElementById('leftBtn');
         const rightBtn = document.getElementById('rightBtn');
         const jumpBtn = document.getElementById('jumpBtn');
+        const soundToggle = document.getElementById('soundToggle');
+        const soundIcon = document.getElementById('soundIcon');
         const laneDots = document.querySelectorAll('.lane-dot');
+        
+        // Audio elements
+        const backgroundMusic = document.getElementById('backgroundMusic');
+        const coinSound = document.getElementById('coinSound');
+        const jumpSound = document.getElementById('jumpSound');
+        const gameOverSound = document.getElementById('gameOverSound');
+        const collisionSound = document.getElementById('collisionSound');
         
         // Set canvas size
         function resizeCanvas() {
@@ -256,6 +453,7 @@
             running: false,
             score: 0,
             coins: 0,
+            highScore: localStorage.getItem('subwayRunnerHighScore') || 0,
             speed: 5,
             lanes: [canvas.width * 0.25, canvas.width * 0.5, canvas.width * 0.75],
             currentLane: 1, // Middle lane
@@ -269,7 +467,8 @@
             isJumping: false,
             jumpVelocity: 0,
             jumpPower: 15,
-            groundLevel: canvas.height * 0.7
+            groundLevel: canvas.height * 0.7,
+            soundEnabled: true
         };
         
         // Player character
@@ -280,6 +479,9 @@
             y: game.groundLevel - 60,
             color: '#3498db'
         };
+        
+        // Initialize high score display
+        highScoreDisplay.textContent = game.highScore;
         
         // Obstacle class
         class Obstacle {
@@ -304,6 +506,10 @@
                 // Add some details to the obstacle
                 ctx.fillStyle = '#c0392b';
                 ctx.fillRect(this.x + 5, this.y + 5, this.width - 10, this.height - 10);
+                
+                // Add highlight
+                ctx.fillStyle = '#ff6b6b';
+                ctx.fillRect(this.x + 8, this.y + 8, 10, 10);
             }
             
             isOffScreen() {
@@ -321,25 +527,39 @@
                 this.color = '#FFD700';
                 this.lane = lane;
                 this.collected = false;
+                this.rotation = 0;
             }
             
             update() {
                 this.y -= this.speed;
+                this.rotation += 0.1;
             }
             
             draw() {
                 if (this.collected) return;
                 
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.rotation);
+                
                 ctx.fillStyle = this.color;
                 ctx.beginPath();
-                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.arc(0, 0, this.radius, 0, Math.PI * 2);
                 ctx.fill();
                 
                 // Add shine effect
                 ctx.fillStyle = '#FFF';
                 ctx.beginPath();
-                ctx.arc(this.x - 5, this.y - 5, this.radius / 3, 0, Math.PI * 2);
+                ctx.arc(-5, -5, this.radius / 3, 0, Math.PI * 2);
                 ctx.fill();
+                
+                // Add detail
+                ctx.fillStyle = '#FFA500';
+                ctx.beginPath();
+                ctx.arc(0, 0, this.radius - 5, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.restore();
             }
             
             isOffScreen() {
@@ -373,6 +593,19 @@
                 const buildingWidth = canvas.width / 8;
                 const buildingHeight = Math.random() * 100 + 50;
                 ctx.fillRect(i * buildingWidth * 1.5, game.groundLevel - buildingHeight, buildingWidth, buildingHeight);
+                
+                // Add windows to buildings
+                ctx.fillStyle = '#f1c40f';
+                for (let j = 0; j < 4; j++) {
+                    for (let k = 0; k < 3; k++) {
+                        ctx.fillRect(
+                            i * buildingWidth * 1.5 + 10 + k * 15,
+                            game.groundLevel - buildingHeight + 20 + j * 20,
+                            8, 12
+                        );
+                    }
+                }
+                ctx.fillStyle = '#34495e';
             }
         }
         
@@ -389,7 +622,21 @@
             ctx.fillStyle = '#FFF';
             ctx.fillRect(player.x + 10, player.y + 15, 8, 8); // Left eye
             ctx.fillRect(player.x + player.width - 18, player.y + 15, 8, 8); // Right eye
-            ctx.fillRect(player.x + 12, player.y + 35, player.width - 24, 5); // Mouth
+            
+            // Draw mouth (changes when jumping)
+            if (game.isJumping) {
+                ctx.fillRect(player.x + 12, player.y + 35, player.width - 24, 3); // Small mouth when jumping
+            } else {
+                ctx.fillRect(player.x + 12, player.y + 35, player.width - 24, 5); // Normal mouth
+            }
+            
+            // Draw arms and legs
+            ctx.fillStyle = '#2980b9';
+            ctx.fillRect(player.x - 5, player.y + 15, 5, 15); // Left arm
+            ctx.fillRect(player.x + player.width, player.y + 15, 5, 15); // Right arm
+            
+            ctx.fillRect(player.x + 5, player.y + player.height, 8, 10); // Left leg
+            ctx.fillRect(player.x + player.width - 13, player.y + player.height, 8, 10); // Right leg
         }
         
         // Update player position based on current lane
@@ -431,6 +678,10 @@
                     player.y < obstacle.y + obstacle.height &&
                     player.y + player.height > obstacle.y
                 ) {
+                    if (game.soundEnabled) {
+                        collisionSound.currentTime = 0;
+                        collisionSound.play().catch(e => console.log("Audio play failed:", e));
+                    }
                     endGame();
                     return;
                 }
@@ -444,6 +695,11 @@
                     coin.collected = true;
                     game.coins++;
                     coinsDisplay.textContent = game.coins;
+                    
+                    if (game.soundEnabled) {
+                        coinSound.currentTime = 0;
+                        coinSound.play().catch(e => console.log("Audio play failed:", e));
+                    }
                 }
             }
         }
@@ -518,6 +774,12 @@
             game.score += 1;
             scoreDisplay.textContent = game.score;
             
+            // Update high score if needed
+            if (game.score > game.highScore) {
+                game.highScore = game.score;
+                highScoreDisplay.textContent = game.highScore;
+            }
+            
             // Continue game loop
             requestAnimationFrame(gameLoop);
         }
@@ -528,6 +790,7 @@
                 running: true,
                 score: 0,
                 coins: 0,
+                highScore: Math.max(game.highScore, parseInt(localStorage.getItem('subwayRunnerHighScore') || 0)),
                 speed: 5,
                 lanes: [canvas.width * 0.25, canvas.width * 0.5, canvas.width * 0.75],
                 currentLane: 1,
@@ -541,7 +804,8 @@
                 isJumping: false,
                 jumpVelocity: 0,
                 jumpPower: 15,
-                groundLevel: canvas.height * 0.7
+                groundLevel: canvas.height * 0.7,
+                soundEnabled: game.soundEnabled
             };
             
             player.x = game.lanes[game.currentLane] - player.width/2;
@@ -549,9 +813,16 @@
             
             scoreDisplay.textContent = '0';
             coinsDisplay.textContent = '0';
+            highScoreDisplay.textContent = game.highScore;
             
             startScreen.style.display = 'none';
             gameOverScreen.style.display = 'none';
+            
+            // Start background music if sound is enabled
+            if (game.soundEnabled) {
+                backgroundMusic.volume = 0.5;
+                backgroundMusic.play().catch(e => console.log("Audio play failed:", e));
+            }
             
             gameLoop();
         }
@@ -561,33 +832,69 @@
             game.running = false;
             finalScore.textContent = game.score;
             finalCoins.textContent = game.coins;
+            finalHighScore.textContent = game.highScore;
             gameOverScreen.style.display = 'flex';
+            
+            // Stop background music
+            backgroundMusic.pause();
+            backgroundMusic.currentTime = 0;
+            
+            // Play game over sound
+            if (game.soundEnabled) {
+                gameOverSound.currentTime = 0;
+                gameOverSound.play().catch(e => console.log("Audio play failed:", e));
+            }
+            
+            // Save high score to localStorage
+            if (game.score > parseInt(localStorage.getItem('subwayRunnerHighScore') || 0)) {
+                localStorage.setItem('subwayRunnerHighScore', game.score);
+            }
+        }
+        
+        // Toggle sound
+        function toggleSound() {
+            game.soundEnabled = !game.soundEnabled;
+            if (game.soundEnabled) {
+                soundIcon.textContent = '🔊';
+                if (game.running) {
+                    backgroundMusic.play().catch(e => console.log("Audio play failed:", e));
+                }
+            } else {
+                soundIcon.textContent = '🔇';
+                backgroundMusic.pause();
+            }
         }
         
         // Event listeners
         startBtn.addEventListener('click', startGame);
         restartBtn.addEventListener('click', startGame);
+        soundToggle.addEventListener('click', toggleSound);
         
         // Touch controls
         leftBtn.addEventListener('touchstart', (e) => {
             e.preventDefault();
-            if (game.currentLane > 0) {
+            if (game.running && game.currentLane > 0) {
                 game.currentLane--;
             }
         });
         
         rightBtn.addEventListener('touchstart', (e) => {
             e.preventDefault();
-            if (game.currentLane < 2) {
+            if (game.running && game.currentLane < 2) {
                 game.currentLane++;
             }
         });
         
         jumpBtn.addEventListener('touchstart', (e) => {
             e.preventDefault();
-            if (!game.isJumping) {
+            if (game.running && !game.isJumping) {
                 game.isJumping = true;
                 game.jumpVelocity = game.jumpPower;
+                
+                if (game.soundEnabled) {
+                    jumpSound.currentTime = 0;
+                    jumpSound.play().catch(e => console.log("Audio play failed:", e));
+                }
             }
         });
         
@@ -607,6 +914,11 @@
                     if (!game.isJumping) {
                         game.isJumping = true;
                         game.jumpVelocity = game.jumpPower;
+                        
+                        if (game.soundEnabled) {
+                            jumpSound.currentTime = 0;
+                            jumpSound.play().catch(e => console.log("Audio play failed:", e));
+                        }
                     }
                     break;
             }
@@ -616,6 +928,10 @@
         document.addEventListener('touchmove', (e) => {
             e.preventDefault();
         }, { passive: false });
+        
+        // Initialize game with sound off by default (to respect autoplay policies)
+        game.soundEnabled = false;
+        soundIcon.textContent = '🔇';
     </script>
 </body>
 </html>
