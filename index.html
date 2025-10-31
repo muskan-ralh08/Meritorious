@@ -1,33 +1,18 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <title>Subway-Style Runner</title>
-    <link rel="stylesheet" href="styles.css">
-  </head>
-  <body>
-    <div id="ui">
-      <div id="top-bar">
-        <div id="score">0</div>
-        <div id="best">Best: 0</div>
-        <button id="pause-btn" aria-label="Pause">⏸</button>
-      </div>
-      <div id="center-overlay" class="overlay show">
-        <h1>Runner</h1>
-        <p>Swipe or use arrow keys to move lanes. Up to jump, Down to slide.</p>
-        <button id="start-btn">Play</button>
-      </div>
-      <div id="gameover-overlay" class="overlay">
-        <h2>Game Over</h2>
-        <p id="final-score">Score: 0</p>
-        <button id="restart-btn">Restart</button>
-      </div>
-    </div>
-    <canvas id="game"></canvas>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mini Subway Surfer</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="game">
+    <div id="player"></div>
+    <div id="obstacle"></div>
+    <div id="score">Score: 0</div>
+  </div>
 
-    <script src="game.js"></script>
-  </body>
-  </html>
-
-
+  <script src="./game.js"></script>
+</body>
+</html>
