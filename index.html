@@ -2,936 +2,164 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Subway Runner - Muskan Ralh</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            touch-action: manipulation;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
-            height: 100vh;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            user-select: none;
-            -webkit-user-select: none;
-        }
-        
-        .game-container {
-            position: relative;
-            width: 100%;
-            max-width: 500px;
-            height: 80vh;
-            overflow: hidden;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            border: 3px solid #FFD700;
-        }
-        
-        #gameCanvas {
-            background: linear-gradient(to bottom, #2c3e50, #4a6491);
-            display: block;
-            width: 100%;
-            height: 100%;
-        }
-        
-        .ui-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-        }
-        
-        .score-display, .coins-display {
-            position: absolute;
-            top: 20px;
-            font-size: 22px;
-            font-weight: bold;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
-            background: rgba(0, 0, 0, 0.5);
-            padding: 8px 15px;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .score-display {
-            left: 20px;
-            border: 2px solid #4CAF50;
-        }
-        
-        .coins-display {
-            right: 20px;
-            border: 2px solid #FFD700;
-        }
-        
-        .controls {
-            position: absolute;
-            bottom: 25px;
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            padding: 0 25px;
-            pointer-events: auto;
-        }
-        
-        .control-btn {
-            width: 75px;
-            height: 75px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.2);
-            border: 3px solid white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-            color: white;
-            cursor: pointer;
-            transition: all 0.2s;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(5px);
-        }
-        
-        .control-btn:active {
-            transform: scale(0.85);
-            background: rgba(255, 255, 255, 0.4);
-        }
-        
-        .start-screen, .game-over-screen {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            background: rgba(0, 0, 0, 0.85);
-            z-index: 10;
-            text-align: center;
-            padding: 20px;
-        }
-        
-        .game-over-screen {
-            display: none;
-        }
-        
-        h1 {
-            font-size: 48px;
-            margin-bottom: 15px;
-            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.7);
-            background: linear-gradient(to right, #FFD700, #FFA500, #FF8C00);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: 2px;
-        }
-        
-        .subtitle {
-            font-size: 18px;
-            margin-bottom: 30px;
-            color: #FFD700;
-            font-weight: bold;
-        }
-        
-        .btn {
-            padding: 15px 40px;
-            font-size: 20px;
-            background: linear-gradient(to right, #FF5722, #FF9800);
-            border: none;
-            border-radius: 50px;
-            color: white;
-            cursor: pointer;
-            margin-top: 20px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
-            transition: all 0.3s;
-            pointer-events: auto;
-            font-weight: bold;
-            letter-spacing: 1px;
-        }
-        
-        .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
-        }
-        
-        .btn:active {
-            transform: translateY(1px);
-        }
-        
-        .instructions {
-            text-align: center;
-            max-width: 85%;
-            margin: 25px 0;
-            line-height: 1.6;
-            font-size: 16px;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 15px;
-            border-radius: 10px;
-            border-left: 4px solid #FFD700;
-        }
-        
-        .lane-indicator {
-            position: absolute;
-            bottom: 120px;
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            gap: 25px;
-        }
-        
-        .lane-dot {
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.4);
-            transition: all 0.3s;
-            box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
-        }
-        
-        .lane-dot.active {
-            background: #FFD700;
-            transform: scale(1.4);
-            box-shadow: 0 0 15px #FFD700;
-        }
-        
-        .sound-toggle {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            width: 40px;
-            height: 40px;
-            background: rgba(0, 0, 0, 0.5);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            pointer-events: auto;
-            z-index: 5;
-            border: 2px solid #FFD700;
-        }
-        
-        .high-score {
-            position: absolute;
-            top: 80px;
-            left: 20px;
-            font-size: 16px;
-            background: rgba(0, 0, 0, 0.5);
-            padding: 5px 15px;
-            border-radius: 15px;
-            border: 1px solid #4CAF50;
-        }
-        
-        .power-ups {
-            position: absolute;
-            top: 80px;
-            right: 20px;
-            display: flex;
-            gap: 10px;
-        }
-        
-        .power-up {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            border: 1px solid white;
-        }
-        
-        .power-up.active {
-            background: rgba(255, 215, 0, 0.7);
-            box-shadow: 0 0 10px #FFD700;
-        }
-        
-        @media (max-width: 500px) {
-            .control-btn {
-                width: 65px;
-                height: 65px;
-                font-size: 24px;
-            }
-            
-            h1 {
-                font-size: 36px;
-            }
-            
-            .btn {
-                padding: 12px 30px;
-                font-size: 18px;
-            }
-            
-            .instructions {
-                font-size: 14px;
-            }
-        }
-        
-        .character {
-            width: 60px;
-            height: 80px;
-            position: absolute;
-            bottom: 120px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: linear-gradient(to bottom, #3498db, #2980b9);
-            border-radius: 10px 10px 5px 5px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-        }
-        
-        .character::before {
-            content: '';
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            background: #2c3e50;
-            border-radius: 50%;
-            top: 15px;
-            left: 10px;
-        }
-        
-        .character::after {
-            content: '';
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            background: #2c3e50;
-            border-radius: 50%;
-            top: 15px;
-            right: 10px;
-        }
-        
-        .pulse {
-            animation: pulse 1.5s infinite;
-        }
-        
-        @keyframes pulse {
-            0% { transform: translateX(-50%) scale(1); }
-            50% { transform: translateX(-50%) scale(1.05); }
-            100% { transform: translateX(-50%) scale(1); }
-        }
-        
-        .floating {
-            animation: floating 3s ease-in-out infinite;
-        }
-        
-        @keyframes floating {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Muskan | Portfolio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="game-container">
-        <canvas id="gameCanvas"></canvas>
-        <H1>GAME BY MUSKAN RALH</H1>
-        <div class="ui-overlay">
-            <div class="score-display">
-                <span>🏆</span> Score: <span id="score">0</span>
+    <header class="hero" id="home">
+        <nav class="navbar">
+            <a class="brand" href="#home">Muskan</a>
+            <button class="menu-toggle" aria-label="Toggle navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-links">
+                <li><a href="#about">About</a></li>
+                <li><a href="#skills">Skills</a></li>
+                <li><a href="#education">Education</a></li>
+                <li><a href="#certificates">Certificates</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+        <div class="hero-content">
+            <div class="hero-text" data-animate="fade-right">
+                <h1>Hi, I’m Muskan</h1>
+                <p class="tagline">Aspiring technologist with a passion for design and smart automation.</p>
+                <div class="hero-actions">
+                    <a class="btn primary" href="#contact">Hire Me</a>
+                    <a class="btn secondary" href="#skills">View Skills</a>
+                </div>
             </div>
-            <div class="coins-display">
-                <span>🪙</span> Coins: <span id="coins">0</span>
-            </div>
-            
-            <div class="high-score">
-                High Score: <span id="highScore">0</span>
-            </div>
-            
-            <div class="power-ups">
-                <div class="power-up" title="Magnet">🧲</div>
-                <div class="power-up" title="Shield">🛡️</div>
-                <div class="power-up" title="Boost">🚀</div>
-            </div>
-            
-            <div class="lane-indicator">
-                <div class="lane-dot" data-lane="0"></div>
-                <div class="lane-dot" data-lane="1"></div>
-                <div class="lane-dot" data-lane="2"></div>
-            </div>
-            
-            <div class="controls">
-                <div class="control-btn" id="leftBtn">←</div>
-                <div class="control-btn" id="jumpBtn">↑</div>
-                <div class="control-btn" id="rightBtn">→</div>
-            </div>
-            
-            <div class="sound-toggle" id="soundToggle">
-                <span id="soundIcon">🔊</span>
+            <div class="hero-card" data-animate="fade-left">
+                <div class="profile-initials">M</div>
+                <div class="profile-details">
+                    <p><strong>Full Name:</strong> Muskan</p>
+                    <p><strong>D.O.B:</strong> 02 March 2008</p>
+                    <p><strong>City:</strong> Garhshankar, Hoshiarpur</p>
+                    <p><strong>State:</strong> Punjab</p>
+                    <p><strong>Age:</strong> 17 years</p>
+                </div>
             </div>
         </div>
-        
-        <div class="start-screen" id="startScreen">
-            <h1>SUBWAY RUNNER</h1>
-            <div class="subtitle">By Muskan Ralh</div>
-            <div class="character pulse"></div>
-            <p class="instructions">Swipe or use buttons to move between lanes, jump to avoid obstacles, and collect as many coins as you can!</p>
-            <button class="btn floating" id="startBtn">START GAME</button>
-        </div>
-        
-        <div class="game-over-screen" id="gameOverScreen">
-            <h1>GAME OVER</h1>
-            <div class="instructions">
-                <p>Your Score: <span id="finalScore">0</span></p>
-                <p>Coins Collected: <span id="finalCoins">0</span></p>
-                <p>High Score: <span id="finalHighScore">0</span></p>
-            </div>
-            <button class="btn" id="restartBtn">PLAY AGAIN</button>
-        </div>
-    </div>
+    </header>
 
-    <!-- Audio elements -->
-    <audio id="backgroundMusic" loop>
-        <source src="https://assets.mixkit.co/music/preview/mixkit-game-show-suspense-waiting-667.mp3" type="audio/mpeg">
-    </audio>
-    <audio id="coinSound">
-        <source src="https://assets.mixkit.co/sfx/preview/mixkit-coin-win-notification-1996.mp3" type="audio/mpeg">
-    </audio>
-    <audio id="jumpSound">
-        <source src="https://assets.mixkit.co/sfx/preview/mixkit-player-jumping-in-a-video-game-2043.mp3" type="audio/mpeg">
-    </audio>
-    <audio id="gameOverSound">
-        <source src="https://assets.mixkit.co/sfx/preview/mixkit-arcade-retro-game-over-213.mp3" type="audio/mpeg">
-    </audio>
-    <audio id="collisionSound">
-        <source src="https://assets.mixkit.co/sfx/preview/mixkit-arcade-game-explosion-2759.mp3" type="audio/mpeg">
-    </audio>
+    <main>
+        <section class="section about" id="about" data-animate="fade-up">
+            <div class="section-heading">
+                <h2>About Me</h2>
+                <p>A quick glance at my background.</p>
+            </div>
+            <div class="about-grid">
+                <div class="about-card" data-animate="zoom-in">
+                    <h3>Family</h3>
+                    <ul>
+                        <li>Father: Jasvir Singh</li>
+                        <li>Mother: Manjit Kaur</li>
+                    </ul>
+                </div>
+                <div class="about-card" data-animate="zoom-in">
+                    <h3>Ambition</h3>
+                    <p>I am motivated to leverage digital tools, automation, and creative design to solve real-world problems. I enjoy learning new technologies and transforming ideas into impactful experiences.</p>
+                </div>
+            </div>
+        </section>
 
-    <script>
-        // Game variables
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
-        const scoreDisplay = document.getElementById('score');
-        const coinsDisplay = document.getElementById('coins');
-        const highScoreDisplay = document.getElementById('highScore');
-        const startScreen = document.getElementById('startScreen');
-        const gameOverScreen = document.getElementById('gameOverScreen');
-        const finalScore = document.getElementById('finalScore');
-        const finalCoins = document.getElementById('finalCoins');
-        const finalHighScore = document.getElementById('finalHighScore');
-        const startBtn = document.getElementById('startBtn');
-        const restartBtn = document.getElementById('restartBtn');
-        const leftBtn = document.getElementById('leftBtn');
-        const rightBtn = document.getElementById('rightBtn');
-        const jumpBtn = document.getElementById('jumpBtn');
-        const soundToggle = document.getElementById('soundToggle');
-        const soundIcon = document.getElementById('soundIcon');
-        const laneDots = document.querySelectorAll('.lane-dot');
-        
-        // Audio elements
-        const backgroundMusic = document.getElementById('backgroundMusic');
-        const coinSound = document.getElementById('coinSound');
-        const jumpSound = document.getElementById('jumpSound');
-        const gameOverSound = document.getElementById('gameOverSound');
-        const collisionSound = document.getElementById('collisionSound');
-        
-        // Set canvas size
-        function resizeCanvas() {
-            canvas.width = canvas.offsetWidth;
-            canvas.height = canvas.offsetHeight;
-        }
-        
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
-        
-        // Game state
-        let game = {
-            running: false,
-            score: 0,
-            coins: 0,
-            highScore: localStorage.getItem('subwayRunnerHighScore') || 0,
-            speed: 5,
-            lanes: [canvas.width * 0.25, canvas.width * 0.5, canvas.width * 0.75],
-            currentLane: 1, // Middle lane
-            obstacles: [],
-            coinsList: [],
-            lastObstacleTime: 0,
-            lastCoinTime: 0,
-            obstacleInterval: 1500, // ms
-            coinInterval: 1000, // ms
-            gravity: 0.5,
-            isJumping: false,
-            jumpVelocity: 0,
-            jumpPower: 15,
-            groundLevel: canvas.height * 0.7,
-            soundEnabled: true
-        };
-        
-        // Player character
-        const player = {
-            width: 40,
-            height: 60,
-            x: game.lanes[game.currentLane] - 20,
-            y: game.groundLevel - 60,
-            color: '#3498db'
-        };
-        
-        // Initialize high score display
-        highScoreDisplay.textContent = game.highScore;
-        
-        // Obstacle class
-        class Obstacle {
-            constructor(lane) {
-                this.width = 40;
-                this.height = 60;
-                this.x = game.lanes[lane] - this.width/2;
-                this.y = canvas.height;
-                this.speed = game.speed;
-                this.color = '#e74c3c';
-                this.lane = lane;
-            }
-            
-            update() {
-                this.y -= this.speed;
-            }
-            
-            draw() {
-                ctx.fillStyle = this.color;
-                ctx.fillRect(this.x, this.y, this.width, this.height);
-                
-                // Add some details to the obstacle
-                ctx.fillStyle = '#c0392b';
-                ctx.fillRect(this.x + 5, this.y + 5, this.width - 10, this.height - 10);
-                
-                // Add highlight
-                ctx.fillStyle = '#ff6b6b';
-                ctx.fillRect(this.x + 8, this.y + 8, 10, 10);
-            }
-            
-            isOffScreen() {
-                return this.y < -this.height;
-            }
-        }
-        
-        // Coin class
-        class Coin {
-            constructor(lane) {
-                this.radius = 15;
-                this.x = game.lanes[lane];
-                this.y = canvas.height;
-                this.speed = game.speed;
-                this.color = '#FFD700';
-                this.lane = lane;
-                this.collected = false;
-                this.rotation = 0;
-            }
-            
-            update() {
-                this.y -= this.speed;
-                this.rotation += 0.1;
-            }
-            
-            draw() {
-                if (this.collected) return;
-                
-                ctx.save();
-                ctx.translate(this.x, this.y);
-                ctx.rotate(this.rotation);
-                
-                ctx.fillStyle = this.color;
-                ctx.beginPath();
-                ctx.arc(0, 0, this.radius, 0, Math.PI * 2);
-                ctx.fill();
-                
-                // Add shine effect
-                ctx.fillStyle = '#FFF';
-                ctx.beginPath();
-                ctx.arc(-5, -5, this.radius / 3, 0, Math.PI * 2);
-                ctx.fill();
-                
-                // Add detail
-                ctx.fillStyle = '#FFA500';
-                ctx.beginPath();
-                ctx.arc(0, 0, this.radius - 5, 0, Math.PI * 2);
-                ctx.fill();
-                
-                ctx.restore();
-            }
-            
-            isOffScreen() {
-                return this.y < -this.radius * 2;
-            }
-        }
-        
-        // Draw background elements
-        function drawBackground() {
-            // Draw tracks
-            ctx.fillStyle = '#333';
-            ctx.fillRect(0, game.groundLevel, canvas.width, canvas.height - game.groundLevel);
-            
-            // Draw lane dividers
-            ctx.strokeStyle = '#FFF';
-            ctx.lineWidth = 2;
-            ctx.setLineDash([10, 15]);
-            
-            for (let i = 1; i < 3; i++) {
-                ctx.beginPath();
-                ctx.moveTo(game.lanes[i] - game.lanes[0], game.groundLevel);
-                ctx.lineTo(game.lanes[i] - game.lanes[0], canvas.height);
-                ctx.stroke();
-            }
-            
-            ctx.setLineDash([]);
-            
-            // Draw some background buildings
-            ctx.fillStyle = '#34495e';
-            for (let i = 0; i < 5; i++) {
-                const buildingWidth = canvas.width / 8;
-                const buildingHeight = Math.random() * 100 + 50;
-                ctx.fillRect(i * buildingWidth * 1.5, game.groundLevel - buildingHeight, buildingWidth, buildingHeight);
-                
-                // Add windows to buildings
-                ctx.fillStyle = '#f1c40f';
-                for (let j = 0; j < 4; j++) {
-                    for (let k = 0; k < 3; k++) {
-                        ctx.fillRect(
-                            i * buildingWidth * 1.5 + 10 + k * 15,
-                            game.groundLevel - buildingHeight + 20 + j * 20,
-                            8, 12
-                        );
-                    }
-                }
-                ctx.fillStyle = '#34495e';
-            }
-        }
-        
-        // Draw player
-        function drawPlayer() {
-            ctx.fillStyle = player.color;
-            ctx.fillRect(player.x, player.y, player.width, player.height);
-            
-            // Draw player details
-            ctx.fillStyle = '#2980b9';
-            ctx.fillRect(player.x + 5, player.y + 5, player.width - 10, player.height - 10);
-            
-            // Draw face
-            ctx.fillStyle = '#FFF';
-            ctx.fillRect(player.x + 10, player.y + 15, 8, 8); // Left eye
-            ctx.fillRect(player.x + player.width - 18, player.y + 15, 8, 8); // Right eye
-            
-            // Draw mouth (changes when jumping)
-            if (game.isJumping) {
-                ctx.fillRect(player.x + 12, player.y + 35, player.width - 24, 3); // Small mouth when jumping
-            } else {
-                ctx.fillRect(player.x + 12, player.y + 35, player.width - 24, 5); // Normal mouth
-            }
-            
-            // Draw arms and legs
-            ctx.fillStyle = '#2980b9';
-            ctx.fillRect(player.x - 5, player.y + 15, 5, 15); // Left arm
-            ctx.fillRect(player.x + player.width, player.y + 15, 5, 15); // Right arm
-            
-            ctx.fillRect(player.x + 5, player.y + player.height, 8, 10); // Left leg
-            ctx.fillRect(player.x + player.width - 13, player.y + player.height, 8, 10); // Right leg
-        }
-        
-        // Update player position based on current lane
-        function updatePlayerPosition() {
-            const targetX = game.lanes[game.currentLane] - player.width/2;
-            player.x += (targetX - player.x) * 0.2; // Smooth movement
-            
-            // Update lane indicator
-            laneDots.forEach((dot, index) => {
-                if (index === game.currentLane) {
-                    dot.classList.add('active');
-                } else {
-                    dot.classList.remove('active');
-                }
-            });
-        }
-        
-        // Handle jumping physics
-        function updateJump() {
-            if (game.isJumping) {
-                player.y -= game.jumpVelocity;
-                game.jumpVelocity -= game.gravity;
-                
-                if (player.y >= game.groundLevel - player.height) {
-                    player.y = game.groundLevel - player.height;
-                    game.isJumping = false;
-                    game.jumpVelocity = 0;
-                }
-            }
-        }
-        
-        // Check collisions
-        function checkCollisions() {
-            // Check obstacle collisions
-            for (let obstacle of game.obstacles) {
-                if (
-                    player.x < obstacle.x + obstacle.width &&
-                    player.x + player.width > obstacle.x &&
-                    player.y < obstacle.y + obstacle.height &&
-                    player.y + player.height > obstacle.y
-                ) {
-                    if (game.soundEnabled) {
-                        collisionSound.currentTime = 0;
-                        collisionSound.play().catch(e => console.log("Audio play failed:", e));
-                    }
-                    endGame();
-                    return;
-                }
-            }
-            
-            // Check coin collisions
-            for (let coin of game.coinsList) {
-                if (!coin.collected && 
-                    Math.sqrt((player.x + player.width/2 - coin.x) ** 2 + (player.y + player.height/2 - coin.y) ** 2) < 
-                    player.width/2 + coin.radius) {
-                    coin.collected = true;
-                    game.coins++;
-                    coinsDisplay.textContent = game.coins;
-                    
-                    if (game.soundEnabled) {
-                        coinSound.currentTime = 0;
-                        coinSound.play().catch(e => console.log("Audio play failed:", e));
-                    }
-                }
-            }
-        }
-        
-        // Spawn obstacles
-        function spawnObstacle() {
-            const currentTime = Date.now();
-            if (currentTime - game.lastObstacleTime > game.obstacleInterval) {
-                const lane = Math.floor(Math.random() * 3);
-                game.obstacles.push(new Obstacle(lane));
-                game.lastObstacleTime = currentTime;
-                
-                // Gradually increase difficulty
-                game.obstacleInterval = Math.max(500, game.obstacleInterval - 10);
-                game.speed = Math.min(15, game.speed + 0.01);
-            }
-        }
-        
-        // Spawn coins
-        function spawnCoin() {
-            const currentTime = Date.now();
-            if (currentTime - game.lastCoinTime > game.coinInterval) {
-                const lane = Math.floor(Math.random() * 3);
-                game.coinsList.push(new Coin(lane));
-                game.lastCoinTime = currentTime;
-            }
-        }
-        
-        // Update game objects
-        function updateGameObjects() {
-            // Update obstacles
-            game.obstacles = game.obstacles.filter(obstacle => {
-                obstacle.update();
-                obstacle.draw();
-                return !obstacle.isOffScreen();
-            });
-            
-            // Update coins
-            game.coinsList = game.coinsList.filter(coin => {
-                coin.update();
-                coin.draw();
-                return !coin.isOffScreen() && !coin.collected;
-            });
-        }
-        
-        // Game loop
-        function gameLoop() {
-            if (!game.running) return;
-            
-            // Clear canvas
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // Draw background
-            drawBackground();
-            
-            // Update and draw game objects
-            updateGameObjects();
-            
-            // Update player
-            updatePlayerPosition();
-            updateJump();
-            drawPlayer();
-            
-            // Spawn new objects
-            spawnObstacle();
-            spawnCoin();
-            
-            // Check collisions
-            checkCollisions();
-            
-            // Update score
-            game.score += 1;
-            scoreDisplay.textContent = game.score;
-            
-            // Update high score if needed
-            if (game.score > game.highScore) {
-                game.highScore = game.score;
-                highScoreDisplay.textContent = game.highScore;
-            }
-            
-            // Continue game loop
-            requestAnimationFrame(gameLoop);
-        }
-        
-        // Start game
-        function startGame() {
-            game = {
-                running: true,
-                score: 0,
-                coins: 0,
-                highScore: Math.max(game.highScore, parseInt(localStorage.getItem('subwayRunnerHighScore') || 0)),
-                speed: 5,
-                lanes: [canvas.width * 0.25, canvas.width * 0.5, canvas.width * 0.75],
-                currentLane: 1,
-                obstacles: [],
-                coinsList: [],
-                lastObstacleTime: Date.now(),
-                lastCoinTime: Date.now(),
-                obstacleInterval: 1500,
-                coinInterval: 1000,
-                gravity: 0.5,
-                isJumping: false,
-                jumpVelocity: 0,
-                jumpPower: 15,
-                groundLevel: canvas.height * 0.7,
-                soundEnabled: game.soundEnabled
-            };
-            
-            player.x = game.lanes[game.currentLane] - player.width/2;
-            player.y = game.groundLevel - player.height;
-            
-            scoreDisplay.textContent = '0';
-            coinsDisplay.textContent = '0';
-            highScoreDisplay.textContent = game.highScore;
-            
-            startScreen.style.display = 'none';
-            gameOverScreen.style.display = 'none';
-            
-            // Start background music if sound is enabled
-            if (game.soundEnabled) {
-                backgroundMusic.volume = 0.5;
-                backgroundMusic.play().catch(e => console.log("Audio play failed:", e));
-            }
-            
-            gameLoop();
-        }
-        
-        // End game
-        function endGame() {
-            game.running = false;
-            finalScore.textContent = game.score;
-            finalCoins.textContent = game.coins;
-            finalHighScore.textContent = game.highScore;
-            gameOverScreen.style.display = 'flex';
-            
-            // Stop background music
-            backgroundMusic.pause();
-            backgroundMusic.currentTime = 0;
-            
-            // Play game over sound
-            if (game.soundEnabled) {
-                gameOverSound.currentTime = 0;
-                gameOverSound.play().catch(e => console.log("Audio play failed:", e));
-            }
-            
-            // Save high score to localStorage
-            if (game.score > parseInt(localStorage.getItem('subwayRunnerHighScore') || 0)) {
-                localStorage.setItem('subwayRunnerHighScore', game.score);
-            }
-        }
-        
-        // Toggle sound
-        function toggleSound() {
-            game.soundEnabled = !game.soundEnabled;
-            if (game.soundEnabled) {
-                soundIcon.textContent = '🔊';
-                if (game.running) {
-                    backgroundMusic.play().catch(e => console.log("Audio play failed:", e));
-                }
-            } else {
-                soundIcon.textContent = '🔇';
-                backgroundMusic.pause();
-            }
-        }
-        
-        // Event listeners
-        startBtn.addEventListener('click', startGame);
-        restartBtn.addEventListener('click', startGame);
-        soundToggle.addEventListener('click', toggleSound);
-        
-        // Touch controls
-        leftBtn.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            if (game.running && game.currentLane > 0) {
-                game.currentLane--;
-            }
-        });
-        
-        rightBtn.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            if (game.running && game.currentLane < 2) {
-                game.currentLane++;
-            }
-        });
-        
-        jumpBtn.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            if (game.running && !game.isJumping) {
-                game.isJumping = true;
-                game.jumpVelocity = game.jumpPower;
-                
-                if (game.soundEnabled) {
-                    jumpSound.currentTime = 0;
-                    jumpSound.play().catch(e => console.log("Audio play failed:", e));
-                }
-            }
-        });
-        
-        // Keyboard controls for testing
-        document.addEventListener('keydown', (e) => {
-            if (!game.running) return;
-            
-            switch(e.key) {
-                case 'ArrowLeft':
-                    if (game.currentLane > 0) game.currentLane--;
-                    break;
-                case 'ArrowRight':
-                    if (game.currentLane < 2) game.currentLane++;
-                    break;
-                case 'ArrowUp':
-                case ' ':
-                    if (!game.isJumping) {
-                        game.isJumping = true;
-                        game.jumpVelocity = game.jumpPower;
-                        
-                        if (game.soundEnabled) {
-                            jumpSound.currentTime = 0;
-                            jumpSound.play().catch(e => console.log("Audio play failed:", e));
-                        }
-                    }
-                    break;
-            }
-        });
-        
-        // Prevent default touch behaviors
-        document.addEventListener('touchmove', (e) => {
-            e.preventDefault();
-        }, { passive: false });
-        
-        // Initialize game with sound off by default (to respect autoplay policies)
-        game.soundEnabled = false;
-        soundIcon.textContent = '🔇';
-    </script>
+        <section class="section" id="skills" data-animate="fade-up">
+            <div class="section-heading">
+                <h2>Skills</h2>
+                <p>What I bring to your team.</p>
+            </div>
+            <div class="skills-grid">
+                <article class="skill-card" data-animate="tilt">
+                    <h3>Office Suite</h3>
+                    <p>Experienced in creating polished documents, spreadsheets, and presentations using Microsoft Word, Excel, and PowerPoint.</p>
+                </article>
+                <article class="skill-card" data-animate="tilt">
+                    <h3>Accounting & ERP</h3>
+                    <p>Knowledge of Tally for managing accounts, inventory, and basic financial reporting.</p>
+                </article>
+                <article class="skill-card" data-animate="tilt">
+                    <h3>Graphic Design</h3>
+                    <p>Designs visual assets for print and digital media using modern design principles.</p>
+                </article>
+                <article class="skill-card" data-animate="tilt">
+                    <h3>Artificial Intelligence</h3>
+                    <p>Exploring AI tools to automate tasks, analyze data, and create intelligent solutions.</p>
+                </article>
+            </div>
+        </section>
+
+        <section class="section" id="education" data-animate="fade-up">
+            <div class="section-heading">
+                <h2>Education</h2>
+                <p>Academic milestones and achievements.</p>
+            </div>
+            <div class="timeline">
+                <article class="timeline-item" data-animate="fade-up">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <h3>Senior Secondary (10+2)</h3>
+                        <p class="timeline-subtitle">Senior Secondary School for Meritorious Students, Jalandhar</p>
+                        <ul>
+                            <li>Board: Punjab School Education Board (PSEB)</li>
+                            <li>Stream: Non-Medical</li>
+                            <li>Year of Passing: 2025</li>
+                            <li>Result: First Division with 83%</li>
+                        </ul>
+                    </div>
+                </article>
+                <article class="timeline-item" data-animate="fade-up">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <h3>Matriculation (10th)</h3>
+                        <p class="timeline-subtitle">Government High School, Birampur</p>
+                        <ul>
+                            <li>Board: Punjab School Education Board (PSEB)</li>
+                            <li>Year of Passing: 2023</li>
+                            <li>Result: First Division with 80%</li>
+                        </ul>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section class="section" id="certificates" data-animate="fade-up">
+            <div class="section-heading">
+                <h2>Certificates</h2>
+                <p>Highlights of my professional training.</p>
+            </div>
+            <div class="certificate-card" data-animate="float">
+                <h3>Advanced Computer Course</h3>
+                <p>Completed at Skillup Institute with hands-on training across office productivity, graphic design, and emerging AI tools.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="section" id="contact" data-animate="fade-up">
+        <div class="section-heading">
+            <h2>Contact</h2>
+            <p>Let’s collaborate on impactful projects.</p>
+        </div>
+        <div class="contact-grid">
+            <div class="contact-card" data-animate="zoom-in">
+                <h3>Email</h3>
+                <a href="mailto:muskan.ralh08@gmail.com">muskan.ralh08@gmail.com</a>
+            </div>
+            <div class="contact-card" data-animate="zoom-in">
+                <h3>Phone</h3>
+                <a href="tel:+9198154xxxxx">+91 98154xxxxx</a>
+            </div>
+        </div>
+        <p class="footer-note">Designed with care by Muskan. © <span id="current-year"></span></p>
+    </footer>
+
+    <button class="back-to-top" aria-label="Back to top">↑</button>
+
+    <script src="script.js"></script>
 </body>
 </html>
